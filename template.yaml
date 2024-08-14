@@ -136,7 +136,7 @@ Resources:
     Type: AWS::Serverless::Api
     Properties:
       StageName: Prod
-      Name: ApiBaluchis
+      Name: ApiCafeBalu
       Cors:
         AllowMethods: "'GET,POST,PUT,PATCH,DELETE,OPTIONS'"
         AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
