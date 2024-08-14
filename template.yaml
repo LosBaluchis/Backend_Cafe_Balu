@@ -132,20 +132,6 @@ Resources:
                   - cognito-idp:AdminListGroupsForUser
                 Resource: "*"
 
-  ApiBaluchis:
-    Type: AWS::Serverless::Api
-    Properties:
-      StageName: Prod
-      Name: ApiCafeBalu
-      Cors:
-        AllowMethods: "'GET,POST,PUT,PATCH,DELETE,OPTIONS'"
-        AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
-        AllowOrigin: "'*'"
-      Auth:
-        Authorizers:
-          CognitoAuthorizer:
-            UserPoolArn: !GetAtt CognitoUserPool.Arn
-            IdentitySource: method.request.header.Authorization
   # -- 
 
   S3Bucket:
