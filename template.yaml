@@ -63,10 +63,7 @@ Resources:
         - ALLOW_REFRESH_TOKEN_AUTH
         - ALLOW_USER_SRP_AUTH
         - ALLOW_USER_PASSWORD_AUTH
-      CallbackURLs:
-        - !Sub "https://${ApiBaluchis}.execute-api.${AWS::Region}.amazonaws.com/Prod/callback"
-      LogoutURLs:
-        - !Sub "https://${ApiBaluchis}.execute-api.${AWS::Region}.amazonaws.com/Prod/logout"
+      
 
   LambdaExecutionRole:
     Type: AWS::IAM::Role
@@ -132,6 +129,7 @@ Resources:
                   - cognito-idp:AdminListGroupsForUser
                 Resource: "*"
 
+  
   # -- 
 
   S3Bucket:
