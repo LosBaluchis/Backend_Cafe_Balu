@@ -80,6 +80,7 @@ jobs:
           export PATH="$PATH:$(pwd)/sonar-scanner-4.8.0.2856-linux/bin"
 
       - name: SonarCloud Scan
+        shell: bash
         run: |
           ./sonar-scanner-4.8.0.2856-linux/bin/sonar-scanner \
             -Dsonar.projectKey=LosBaluchis_Backend_Cafe_Balu \
