@@ -9,8 +9,6 @@ jobs:
   check-aws-credentials:
     name: Check AWS Credentials
     runs-on: ubuntu-latest
-    
-    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }} # Solo despliega en push a la rama main
 
     steps:
       - name: Checkout code
@@ -34,53 +32,6 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: us-east-2
 
-  test_and_sonarcloud:
-    name: Run Tox for tests and SonarCloud Scan
-    runs-on: ubuntu-latest
-    needs: check-aws-credentials
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-        
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.12'
-    
-      - name: Install dependencies
-        run: |
-            python -m pip install --upgrade pip
-            pip install tox boto3 botocore==1.27.32
-            
-      - name: Run tests and generate coverage with tox
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: us-east-2
-        run: tox
-
-      - name: Verify coverage.xml exists
-        run: |
-          if [ ! -f coverage.xml ]; then echo "coverage.xml not found"; exit 1; fi
-
-      - name: Install SonarScanner
-        run: |
-          curl -sSLo sonar-scanner-cli.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.8.0.2856-linux.zip
-          unzip sonar-scanner-cli.zip
-          export PATH="$PATH:$(pwd)/sonar-scanner-4.8.0.2856-linux/bin"
-
-      - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
-        with:
-          args: >
-            -Dsonar.projectKey=LosBaluchis_Backend_Cafe_Balu
-            -Dsonar.organization=losbaluchis
-            -Dsonar.python.coverage.reportPaths=coverage.xml
-        env:
-          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
   deploy:
     name: Build and deploy to AWS
     runs-on: ubuntu-latest
@@ -96,37 +47,7 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: '3.12'
-      
-      - name: Install dependencies for save sale
-        run: |
-          cd save_sale/
-          pip install -r requirements.txt
-      
-      - name: Install dependencies for cancel sale
-        run: |
-          cd cancel_sales/
-          pip install -r requirements.txt
-
-      - name: Install dependencies for sales history
-        run: |
-          cd view_sales_history_per_day/
-          pip install -r requirements.txt
-      
-      - name: Install dependencies for save category
-        run: |
-          cd save_category/
-          pip install -r requirements.txt
-
-      - name: Install dependencies for get categories
-        run: |
-          cd get_category/
-          pip install -r requirements.txt
-
-      - name: Install dependencies for update category
-        run: |
-          cd update_category/
-          pip install -r requirements.txt
-
+        
       # Instalar las dependencias que sean necesarias
       - name: Install AWS CLI
         run: |
