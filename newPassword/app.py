@@ -9,8 +9,8 @@ def lambda_handler(event, __):
         "Access-Control-Allow-Headers": "Content-Type, X-Amz-Date, Authorization, X-Api-Key, X-Amz-Security-Token"
     }
     client = boto3.client('cognito-idp', region_name='us-east-2')
-    user_pool_id = "us-east-2_Yxnt4eRMp"
-    client_id = "5ffukkqllrcqtlffpbq1pjuuqc"
+    user_pool_id = "us-east-2_kXCSvbsDl"
+    client_id = "4sobvo41ou6qg80ddcqkhs0vsp"
     try:
         body_parameters = json.loads(event["body"])
         username = body_parameters.get('username')
