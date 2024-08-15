@@ -68,11 +68,12 @@ jobs:
           export PATH="$PATH:$(pwd)/sonar-scanner-4.8.0.2856-linux/bin"
 
       - name: SonarCloud Scan
-        run: sonar-scanner \
-          -Dsonar.projectKey=LosBaluchis_Backend_Cafe_Balu \
-          -Dsonar.organization=losbaluchis \
-          -Dsonar.python.coverage.reportPaths=coverage.xml \
-          -Dsonar.host.url=https://sonarcloud.io \
-          -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+        run: |
+          ./sonar-scanner-4.8.0.2856-linux/bin/sonar-scanner \
+            -Dsonar.projectKey=LosBaluchis_Backend_Cafe_Balu \
+            -Dsonar.organization=losbaluchis \
+            -Dsonar.python.coverage.reportPaths=coverage.xml \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
