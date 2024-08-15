@@ -57,6 +57,10 @@ jobs:
           AWS_DEFAULT_REGION: us-east-2
         run: tox
 
+      - name: Verify coverage.xml exists
+        run: |
+          if [ ! -f coverage.xml ]; then echo "coverage.xml not found"; exit 1; fi
+
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         with:
