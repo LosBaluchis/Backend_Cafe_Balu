@@ -1,14 +1,3 @@
-import os
-
-import boto3
-import pytest
-import requests
-
-"""
-Make sure env variable AWS_SAM_STACK_NAME exists with the name of the stack we are going to test. 
-"""
-
-
 class TestApiGateway:
 
     @pytest.fixture()
@@ -30,10 +19,10 @@ class TestApiGateway:
 
         stacks = response["Stacks"]
         stack_outputs = stacks[0]["Outputs"]
-        api_outputs = [output for output in stack_outputs if output["OutputKey"] == "HelloWorldApi"]
+        api_outputs = [output for output in stack_outputs if output["OutputKey"] == "LoginApi"]  # Cambia "HelloWorldApi" por "LoginApi"
 
         if not api_outputs:
-            raise KeyError(f"HelloWorldAPI not found in stack {stack_name}")
+            raise KeyError(f"LoginApi not found in stack {stack_name}")
 
         return api_outputs[0]["OutputValue"]  # Extract url from stack outputs
 
