@@ -61,7 +61,7 @@ jobs:
         uses: SonarSource/sonarcloud-github-action@master
         with:
           args: >
-            -Dsonar.projectKey=LosBaluchis_MicroServicios_Balu
+            -Dsonar.projectKey=LosBaluchis_Backend_Cafe_Balu
             -Dsonar.organization=losbaluchis
             -Dsonar.python.coverage.reportPaths=coverage.xml
         env:
