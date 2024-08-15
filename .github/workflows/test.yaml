@@ -45,6 +45,11 @@ jobs:
         with:
           python-version: '3.12'
 
+      - name: Install sh
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y dash  # 'dash' es una implementación ligera de 'sh'
+
       - name: Install JDK 17 and set JAVA_HOME
         run: |
           sudo apt-get update
