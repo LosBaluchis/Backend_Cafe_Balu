@@ -17,8 +17,8 @@ lint = true
 capabilities = "CAPABILITY_IAM"
 confirm_changeset = true
 resolve_s3 = true
-stack_name = "baluchis"
-s3_prefix = "baluchis"
+stack_name = "cafe-balu"
+s3_prefix = "cafe-balu"
 region = "us-east-2"
 image_repositories = []
 

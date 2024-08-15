@@ -63,7 +63,10 @@ Resources:
         - ALLOW_REFRESH_TOKEN_AUTH
         - ALLOW_USER_SRP_AUTH
         - ALLOW_USER_PASSWORD_AUTH
-      
+      CallbackURLs:
+        - !Sub "https://${ApiBaluchis}.execute-api.${AWS::Region}.amazonaws.com/Prod/callback"
+      LogoutURLs:
+        - !Sub "https://${ApiBaluchis}.execute-api.${AWS::Region}.amazonaws.com/Prod/logout"
 
   LambdaExecutionRole:
     Type: AWS::IAM::Role
@@ -129,13 +132,10 @@ Resources:
                   - cognito-idp:AdminListGroupsForUser
                 Resource: "*"
 
-  
-  # -- 
-
   S3Bucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: images-balu
+      BucketName: balu-images-cafe
       PublicAccessBlockConfiguration:
         BlockPublicAcls: false
         IgnorePublicAcls: false
@@ -152,6 +152,7 @@ Resources:
               - "*"
             ExposedHeaders:
               - "ETag"
+
   S3BucketPolicy:
     Type: AWS::S3::BucketPolicy
     Properties:
@@ -163,17 +164,17 @@ Resources:
             Effect: Allow
             Principal: "*"
             Action: s3:GetObject
-            Resource: !Sub arn:aws:s3:::images-balu/*
+            Resource: !Sub arn:aws:s3:::balu-images-cafe/*
           - Sid: PublicReadPutObject
             Effect: Allow
             Principal: "*"
             Action: s3:PutObject
-            Resource: !Sub arn:aws:s3:::images-balu/*
+            Resource: !Sub arn:aws:s3:::balu-images-cafe/*
           - Sid: PublicReadListBucket
             Effect: Allow
             Principal: "*"
             Action: s3:ListBucket
-            Resource: !Sub arn:aws:s3:::cafe-balu
+            Resource: !Sub arn:aws:s3:::balu-images-cafe
 
   RDSInstance:
     Type: AWS::RDS::DBInstance
@@ -201,7 +202,46 @@ Resources:
           ToPort: 3306
           CidrIp: 0.0.0.0/0
 
+  ApiBaluchis:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      Name: ApiCafeBalu
+      Cors:
+        AllowMethods: "'GET,POST,PUT,PATCH,DELETE,OPTIONS'"
+        AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+        AllowOrigin: "'*'"
+      Auth:
+        Authorizers:
+          CognitoAuthorizer:
+            UserPoolArn: !GetAtt CognitoUserPool.Arn
+            IdentitySource: method.request.header.Authorization
+  
+  LoginFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: login
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Architectures:
+        - x86_64
+      Events:
+        Login:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiBaluchis
+            Path: /login
+            Method: post
+
 Outputs:
   LambdaExecutionRoleArn:
     Description: "Lambda Execution Role ARN"
     Value: !GetAtt LambdaExecutionRole.Arn
+
+  LoginApi:
+    Description: "Login API"
+    Value: !Sub "https://${ApiBaluchis}.execute-api.${AWS::Region}.amazonaws.com/Prod/login"
+  LoginFunctionArn:
+    Description: "Login Lambda Function ARN"
+    Value: !GetAtt LoginFunction.Arn
