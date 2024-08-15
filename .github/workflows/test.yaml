@@ -51,6 +51,9 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
+      - name: Verify Java version
+        run: java -version
+
       - name: Install dependencies
         run: |
             python -m pip install --upgrade pip
