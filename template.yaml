@@ -362,6 +362,148 @@ Resources:
             Method: put
             Auth:
                 Authorizer: CognitoAuthorizer
+  
+  AddProductFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: save_product/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Architectures:
+        - x86_64
+      Events:
+        AddProduct:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiBaluchis
+            Path: /add_product
+            Method: post
+            Auth:
+              Authorizer: CognitoAuthorizer
+  
+  UpdateProductFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: update_product/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Architectures:
+        - x86_64
+      Events:
+        UpdateProduct:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiBaluchis
+            Path: /update_product
+            Method: put
+            Auth:
+              Authorizer: CognitoAuthorizer
+  
+  ChangeStatusCategoryOrProductFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: change_status_category_or_product/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Architectures:
+        - x86_64
+      Events:
+        ChangeStatus:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiBaluchis
+            Path: /change_status_category_or_product
+            Method: patch
+            Auth:
+              Authorizer: CognitoAuthorizer
+  
+  GetProductsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: get_products/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Architectures:
+        - x86_64
+      Events:
+        GetProducts:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiBaluchis
+            Path: /get_products/{status}
+            Method: get
+  
+  GetTopSoldProductsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: top_sold_products
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Architectures:
+        - x86_64
+      Events:
+        GetTopSoldProducts:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiBaluchis
+            Path: /get_top_sold_products
+            Method: post
+  
+  GetOneProductFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: get_one_product
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Architectures:
+        - x86_64
+      Events:
+        GetOneProduct:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiBaluchis
+            Path: /get_product/{id}
+            Method: get
+  
+  GetLowStockProductsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: get_low_stock_products
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Architectures:
+        - x86_64
+      Events:
+        GetLowStockProducts:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiBaluchis
+            Path: /get_low_stock_products
+            Method: get
+  
+  GetEndOfDayBalanceFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: end_of_day_balance
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Architectures:
+        - x86_64
+      Events:
+        GetEndOfDayBalance:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiBaluchis
+            Path: /get_end_of_day_balance
+            Method: post
 
 Outputs:
   LambdaExecutionRoleArn:
@@ -411,3 +553,56 @@ Outputs:
   UpdateCategoryFunctionArn:
     Description: "UpdateCategory Lambda Function ARN"
     Value: !GetAtt UpdateCategoryFunction.Arn
+  
+  AddProductApi:
+    Description: "API Gateway endpoint URL for Prod stage for AddProduct function"
+    Value: !Sub "https://${ApiBaluchis}.execute-api.${AWS::Region}.amazonaws.com/Prod/add_product"
+  AddProductFunctionArn:
+    Description: "AddProduct Lambda Function ARN"
+    Value: !GetAtt AddProductFunction.Arn
+
+  UpdateProductApi:
+    Description: "Update product API"
+    Value: !Sub "https://${ApiBaluchis}.execute-api.${AWS::Region}.amazonaws.com/Prod/update_product/"
+
+  ChangeStatusCategoryOrProductApi:
+    Description: "API Gateway endpoint URL of Prod stage for ChangeStatusCategoryOrProduct function"
+    Value: !Sub "https://${ApiBaluchis}.execute-api.${AWS::Region}.amazonaws.com/Prod/change_status_category_or_product"
+  ChangeStatusCategoryOrProductApiFunctionArn:
+    Description: "Change Status Category Or Product Lambda Function ARN"
+    Value: !GetAtt ChangeStatusCategoryOrProductFunction.Arn
+  
+  GetProductsApi:
+      Description: "API Gateway endpoint URL of Prod stage for GetProducts function"
+      Value: !Sub "https://${ApiBaluchis}.execute-api.${AWS::Region}.amazonaws.com/Prod/get_products/{status}"
+  GetProductApiFunctionArn:
+      Description: "Get Products Lambda Function ARN"
+      Value: !GetAtt GetProductsFunction.Arn
+  
+  GetTopSoldProductsApi:
+    Description: "Get top sold products API"
+    Value: !Sub "https://${ApiBaluchis}.execute-api.${AWS::Region}.amazonaws.com/Prod/get_top_sold_products"
+  GetTopSoldProductsFunctionArn:
+    Description: "GetTopSoldProducts Lambda Function ARN"
+    Value: !GetAtt GetTopSoldProductsFunction.Arn
+
+  GetOneProductApi:
+    Description: "Get one product API"
+    Value: !Sub "https://${ApiBaluchis}.execute-api.${AWS::Region}.amazonaws.com/Prod/get_product/{id}"
+  GetOneProductFunctionArn:
+    Description: "GetOneProduct Lambda Function ARN"
+    Value: !GetAtt GetOneProductFunction.Arn
+
+  GetLowStockProductsApi:
+    Description: "Get low stock products API"
+    Value: !Sub "https://${ApiBaluchis}.execute-api.${AWS::Region}.amazonaws.com/Prod/get_low_stock_products"
+  GetLowStockProductsFunctionArn:
+    Description: "GetLowStockProducts Lambda Function ARN"
+    Value: !GetAtt GetLowStockProductsFunction.Arn
+
+  GetEndOfDayBalanceApi:
+    Description: "Get end of day balance API"
+    Value: !Sub "https://${ApiBaluchis}.execute-api.${AWS::Region}.amazonaws.com/Prod/get_end_of_day_balance"
+  GetEndOfDayBalanceFunctionArn:
+    Description: "GetEndOfDayBalance Lambda Function ARN"
+    Value: !GetAtt GetEndOfDayBalanceFunction.Arn
