@@ -44,24 +44,7 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.12'
-
-      - name: Install sh
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y dash  # 'dash' es una implementación ligera de 'sh'
-
-      - name: Install JDK 17 and set JAVA_HOME
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y openjdk-17-jdk
-          echo "JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64" >> $GITHUB_ENV
-          echo "PATH=/usr/lib/jvm/java-17-openjdk-amd64/bin:$PATH" >> $GITHUB_ENV
-          export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
-          export PATH=/usr/lib/jvm/java-17-openjdk-amd64/bin:$PATH
-
-      - name: Verify Java version
-        run: java -version
-
+    
       - name: Install dependencies
         run: |
             python -m pip install --upgrade pip
@@ -85,15 +68,11 @@ jobs:
           export PATH="$PATH:$(pwd)/sonar-scanner-4.8.0.2856-linux/bin"
 
       - name: SonarCloud Scan
-        shell: bash
-        run: |
-          ./sonar-scanner-4.8.0.2856-linux/bin/sonar-scanner \
-            -Dsonar.projectKey=LosBaluchis_Backend_Cafe_Balu \
-            -Dsonar.organization=losbaluchis \
-            -Dsonar.python.coverage.reportPaths=coverage.xml \
-            -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+        run: sonar-scanner \
+          -Dsonar.projectKey=LosBaluchis_Backend_Cafe_Balu \
+          -Dsonar.organization=losbaluchis \
+          -Dsonar.python.coverage.reportPaths=coverage.xml \
+          -Dsonar.host.url=https://sonarcloud.io \
+          -Dsonar.login=${{ secrets.SONAR_TOKEN }}
         env:
-          JAVA_HOME: /usr/lib/jvm/java-17-openjdk-amd64
-          PATH: /usr/lib/jvm/java-17-openjdk-amd64/bin:$PATH
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
