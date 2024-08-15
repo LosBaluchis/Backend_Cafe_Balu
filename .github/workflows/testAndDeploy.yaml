@@ -47,7 +47,22 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: '3.12'
-        
+      
+      - name: Install dependencies for save sale
+        run: |
+          cd save_sale/
+          pip install -r requirements.txt
+      
+      - name: Install dependencies for cancel sale
+        run: |
+          cd cancel_sales/
+          pip install -r requirements.txt
+
+      - name: Install dependencies for sales history
+        run: |
+          cd view_sales_history_per_day/
+          pip install -r requirements.txt
+
       # Instalar las dependencias que sean necesarias
       - name: Install AWS CLI
         run: |
