@@ -307,6 +307,61 @@ Resources:
             Method: patch
             Auth:
               Authorizer: CognitoAuthorizer
+  
+  SaveCategoryFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: save_category/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Architectures:
+        - x86_64
+      Events:
+        SaveCategory:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiBaluchis
+            Path: /save_category
+            Method: post
+            Auth:
+              Authorizer: CognitoAuthorizer
+  
+  GetCategoriesFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: get_category/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Architectures:
+        - x86_64
+      Events:
+        GetCategories:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiBaluchis
+            Path: /get_categories/{status}
+            Method: get
+
+  UpdateCategoryFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: update_category/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Architectures:
+        - x86_64
+      Events:
+        UpdateCategory:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiBaluchis
+            Path: /update_category
+            Method: put
+            Auth:
+                Authorizer: CognitoAuthorizer
 
 Outputs:
   LambdaExecutionRoleArn:
@@ -344,3 +399,15 @@ Outputs:
   HistorySalesPerDayFunctionArn:
     Description: "HistorySalesPerDay Lambda Function ARN"
     Value: !GetAtt HistorySalesPerDayFunction.Arn
+
+  SaveCategoryApi:
+    Description: "Save category API"
+    Value: !Sub "https://${ApiBaluchis}.execute-api.${AWS::Region}.amazonaws.com/Prod/save_category"
+
+  GetCategoriesFunctionArn:
+    Description: "GetCategories Lambda Function ARN"
+    Value: !GetAtt GetCategoriesFunction.Arn
+  
+  UpdateCategoryFunctionArn:
+    Description: "UpdateCategory Lambda Function ARN"
+    Value: !GetAtt UpdateCategoryFunction.Arn
