@@ -251,6 +251,63 @@ Resources:
             Path: /new-password
             Method: patch
 
+  SaveSaleFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: save_sale/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Architectures:
+        - x86_64
+      Events:
+        SaveSale:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiBaluchis
+            Path: /save_sale
+            Method: post
+            Auth:
+              Authorizer: CognitoAuthorizer
+  
+  HistorySalesPerDayFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: view_sales_history_per_day
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Architectures:
+        - x86_64
+      Events:
+        HistorySalesPerDay:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiBaluchis
+            Path: /history_per_day
+            Method: post
+            Auth:
+              Authorizer: CognitoAuthorizer
+
+  CancelSaleFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: cancel_sales/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Architectures:
+        - x86_64
+      Events:
+        CancelSale:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiBaluchis
+            Path: /cancel_sale/{id}
+            Method: patch
+            Auth:
+              Authorizer: CognitoAuthorizer
+
 Outputs:
   LambdaExecutionRoleArn:
     Description: "Lambda Execution Role ARN"
@@ -269,3 +326,21 @@ Outputs:
   NewPasswordArn:
     Description: "NewPassword Lambda Function ARN"
     Value: !GetAtt NewPasswordFunction.Arn
+  
+  SaveSaleApi:
+    Description: "Save sale API"
+    Value: !Sub "https://${ApiBaluchis}.execute-api.${AWS::Region}.amazonaws.com/Prod/save_sale"
+  SaveSaleFunctionArn:
+    Description: "SaveSale Lambda Function ARN"
+    Value: !GetAtt SaveSaleFunction.Arn
+  
+  CancelSaleApi:
+    Description: "Cancel sale API"
+    Value: !Sub "https://${ApiBaluchis}.execute-api.${AWS::Region}.amazonaws.com/Prod/cancel_sale/{id}"
+
+  HistorySalesPerDayApi:
+    Description: "View of sales history per day API"
+    Value: !Sub "https://${ApiBaluchis}.execute-api.${AWS::Region}.amazonaws.com/Prod/history_per_day"
+  HistorySalesPerDayFunctionArn:
+    Description: "HistorySalesPerDay Lambda Function ARN"
+    Value: !GetAtt HistorySalesPerDayFunction.Arn
