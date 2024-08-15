@@ -233,6 +233,23 @@ Resources:
             RestApiId: !Ref ApiBaluchis
             Path: /login
             Method: post
+  
+  NewPasswordFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: newPassword
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Architectures:
+        - x86_64
+      Events:
+        NewPassword:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiBaluchis
+            Path: /new-password
+            Method: patch
 
 Outputs:
   LambdaExecutionRoleArn:
@@ -245,3 +262,10 @@ Outputs:
   LoginFunctionArn:
     Description: "Login Lambda Function ARN"
     Value: !GetAtt LoginFunction.Arn
+  
+  NewPasswordApi:
+    Description: "New password API"
+    Value: !Sub "https://${ApiBaluchis}.execute-api.${AWS::Region}.amazonaws.com/Prod/new-password"
+  NewPasswordArn:
+    Description: "NewPassword Lambda Function ARN"
+    Value: !GetAtt NewPasswordFunction.Arn
