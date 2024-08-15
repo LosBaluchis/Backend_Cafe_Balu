@@ -43,7 +43,9 @@ mock_not_found_id = {
 }
 
 class TestGetOneProduct(unittest.TestCase):
-    def test_get_one_product_success(self):
+    @patch("get_one_product.app.get_product")
+    def test_get_one_product_success(self, mock_get_product):
+        mock_get_product.return_value = mock_product
         result = app.lambda_handler(mock_success, None)
         self.assertEqual(result["statusCode"], 200)
         body = json.loads(result["body"])
