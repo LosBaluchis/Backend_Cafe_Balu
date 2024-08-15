@@ -62,6 +62,21 @@ jobs:
         run: |
           cd view_sales_history_per_day/
           pip install -r requirements.txt
+      
+      - name: Install dependencies for save category
+        run: |
+          cd save_category/
+          pip install -r requirements.txt
+
+      - name: Install dependencies for get categories
+        run: |
+          cd get_category/
+          pip install -r requirements.txt
+
+      - name: Install dependencies for update category
+        run: |
+          cd update_category/
+          pip install -r requirements.txt
 
       # Instalar las dependencias que sean necesarias
       - name: Install AWS CLI
