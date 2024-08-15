@@ -1,10 +1,8 @@
 import unittest
 import json
-
-from botocore.exceptions import ClientError
-
-from change_status_category_or_product import app
 from unittest.mock import patch, Mock
+from botocore.exceptions import ClientError
+from change_status_category_or_product import app
 
 # Mocking events
 mock_change_status_category_success = {
@@ -115,20 +113,24 @@ mock_change_status_internal_server_error = {
 class TestChangeStatusCategoryOrProduct(unittest.TestCase):
 
     def test_lambda_change_status_category_success(self):
-        result = app.lambda_handler(mock_change_status_category_success, None)
-        status_code = result["statusCode"]
-        self.assertEqual(status_code, 200)
-        body = json.loads(result["body"])
-        self.assertIn("message", body)
-        self.assertEqual(body["message"], "STATUS_CHANGED")
+        with patch('change_status_category_or_product.app.type_exists', return_value=True), \
+             patch('change_status_category_or_product.app.change_status'):
+            result = app.lambda_handler(mock_change_status_category_success, None)
+            status_code = result["statusCode"]
+            self.assertEqual(status_code, 200)
+            body = json.loads(result["body"])
+            self.assertIn("message", body)
+            self.assertEqual(body["message"], "STATUS_CHANGED")
 
     def test_lambda_change_status_product_success(self):
-        result = app.lambda_handler(mock_change_status_product_success, None)
-        status_code = result["statusCode"]
-        self.assertEqual(status_code, 200)
-        body = json.loads(result["body"])
-        self.assertIn("message", body)
-        self.assertEqual(body["message"], "STATUS_CHANGED")
+        with patch('change_status_category_or_product.app.type_exists', return_value=True), \
+             patch('change_status_category_or_product.app.change_status'):
+            result = app.lambda_handler(mock_change_status_product_success, None)
+            status_code = result["statusCode"]
+            self.assertEqual(status_code, 200)
+            body = json.loads(result["body"])
+            self.assertIn("message", body)
+            self.assertEqual(body["message"], "STATUS_CHANGED")
 
     def test_lambda_change_status_missing_fields(self):
         result = app.lambda_handler(mock_change_status_missing_fields, None)
@@ -154,10 +156,8 @@ class TestChangeStatusCategoryOrProduct(unittest.TestCase):
         self.assertIn("message", body)
         self.assertEqual(body["message"], "INVALID_TYPE_"+json.loads(mock_change_status_invalid_type["body"])["type"])
 
-    @patch("change_status_category_or_product.app.type_exists")
+    @patch("change_status_category_or_product.app.type_exists", return_value=False)
     def test_lambda_change_status_type_not_found(self, mock_type_exists):
-        mock_type_exists.return_value = False
-
         result = app.lambda_handler(mock_change_status_type_not_found, None)
         status_code = result["statusCode"]
         self.assertEqual(status_code, 404)  # Esperando un 404 cuando el tipo no se encuentra
@@ -169,8 +169,9 @@ class TestChangeStatusCategoryOrProduct(unittest.TestCase):
         with self.assertRaises(TypeError):
             app.decimal_to_float("string")
 
+    @patch("change_status_category_or_product.app.type_exists", return_value=True)
     @patch("change_status_category_or_product.app.change_status")
-    def test_lambda_change_status_internal_server_error(self, mock_change_status):
+    def test_lambda_change_status_internal_server_error(self, mock_change_status, mock_type_exists):
         mock_change_status.side_effect = Exception("Internal Server Error 5")
         result = app.lambda_handler(mock_change_status_internal_server_error, None)
         status_code = result["statusCode"]
@@ -178,6 +179,7 @@ class TestChangeStatusCategoryOrProduct(unittest.TestCase):
         body = json.loads(result["body"])
         self.assertIn("message", body)
         self.assertEqual(body["message"], "INTERNAL_SERVER_ERROR_")
+
 
     @patch("change_status_category_or_product.app.boto3.session.Session.client")
     def test_get_secret_client_error(self, mock_client):
@@ -192,7 +194,6 @@ class TestChangeStatusCategoryOrProduct(unittest.TestCase):
             app.get_secret()
 
     def test_lambda_handler_invalid_role(self):
-
         event = {
             "pathParameters": {
                 "id": "1"
